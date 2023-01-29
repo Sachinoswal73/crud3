@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD 3 - Create, Read, Update & Delete</title>
+    <link href="css/style.css" rel="stylesheet">
+    <script src="js/app.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+        integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+</head>
+<body>
+ 
+    <div class="container-fluid bg-primary text-white p-4 ">
+
+        <div class="h1">CRUD 3</div>
+
+    </div>
+
+    <div class="container-fluid p-4 ">
+
+        
+        <div class="row">
+
+            <div class="col-md-6">
+                <div class="h4">Registration Form</div>
+                <hr>
+                <form id="stdForm">
+                    <div class="form-group">
+                        <label for="fname"> First Name</label>
+                        <input type="text" id="fname" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="lname"> Last Name </label>
+                        <input type="text" id="lname" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="email"> Email </label>
+                        <input type="email" id="email" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="contact"> Contact Number </label>
+                        <input type="text" id="contact" class="form-control">
+                    </div>
+                    <div>
+                        <button class="btn btn-success" type="submit" id="submit1"> Submit </button>
+                        <button class="btn btn-dark d-none" type="button" id="update1"> Update</button>
+                    </div>
+                </form>
+            </div>
+
+            
+
+            <div class="col-md-6">
+                <div class="h4">Information</div>
+
+                <hr>
+
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <td>No.</td>
+                            <td>First Name</td>
+                            <td>Last Name</td>
+                            <td>Email</td>
+                            <td>Contact</td>
+                            <td>Options</td>
+                        </tr>
+                    </thead>
+                    <tbody id="hstudents">
+                        
+                    </tbody> 
+                </table>
+
+                
+            </div>
+
+            <script>
+
+              
+
+                let students = [
+                    {
+                        fname : 'Virat',
+                        lname : 'Kohli',
+                        email : 'vtkl@gmail.com',
+                        contact : 9922993993
+                    },
+                    {
+                        fname : 'Rohit',
+                        lname : 'Sharma',
+                        email : 'rhsh@yahoo.com',
+                        contact : 9023904528
+                    }
+                ];
+
+
+
+                const templating = () => {
+
+                    jstudents = ``;
+
+                    students.forEach( ( stdn, i ) => {
+                        jstudents += `
+                            <tr>
+                                <td>${ i + 1 }</td>
+                                <td>${ stdn.fname }</td>
+                                <td>${ stdn.lname }</td>
+                                <td>${ stdn.email }</td>
+                                <td>${ stdn.contact }</td>
+                                <td> <button class="btn btn-info" data-id="${ stdn.id }" onclick="onEdit(this)" id="edit1">Edit</button>
+                                     <button class="btn btn-danger" data-id="${ stdn.id }" onclick="onDelete(this)" id="delete1">Delete</button></td>
+                            </tr>
+                        `;
+                    } );
+
+                    console.log(students);
+                    
+                    document.getElementById("hstudents").innerHTML = jstudents;
+
+                } 
+
+                let wgtStudents = localStorage.getItem("wstStudents");
+
+                students = JSON.parse(wgtStudents);
+
+                templating();  // called templating here which executes when this page renders 
+                
+
+                function onEdit(oe) {
+
+                    getEditId = oe.getAttribute("data-id");
+                    // console.log(getEditId);
+
+                    getObject = students.find( stf => {
+                        if ( getEditId === stf.id ) {
+                            jFname.value = stf.fname,
+                            jLname.value = stf.lname,
+                            jEmail.value = stf.email,
+                            jContact.value = stf.contact
+                        }
+                    } );
+                    // console.log(getObject.id);
+
+                    localStorage.setItem("stEditId", getEditId);
+
+                    jUpdate1.classList.remove("d-none");
+                    jSubmit1.classList.add("d-none");
+
+                }
+
+
+
+                function onDelete(od) {
+
+                    getDeleteId = od.getAttribute("data-id");
+                    // console.log(getDeleteId);
+
+                    getDelObj = students.find( ( std ) => {
+                        if ( getDeleteId === std.id ) {
+                            return std;
+                        }
+                    } );
+                    // console.log(getDelObj.fname);
+
+                    getIndexNo = students.indexOf(getDelObj);
+                    console.log(getIndexNo);
+
+                    students.splice(getIndexNo,1);
+
+                    templating();
+
+                    localStorage.setItem("wstStudents", JSON.stringify(students));
+
+                }
+
+                
+                let jUpdateButton = document.getElementById("updateButton");
+                let jStdForm = document.getElementById("stdForm");
+                let jFname = document.getElementById("fname");
+                let jLname = document.getElementById("lname");
+                let jEmail = document.getElementById("email");
+                let jContact = document.getElementById("contact");
+                let jSubmit1 = document.getElementById("submit1");
+                let jUpdate1 = document.getElementById("update1");
+                
+
+                function uuid() {
+                    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                    });
+                }
+
+                const addNewObject = (eve) => { 
+                    eve.preventDefault(); 
+
+                    let obj = {
+                        fname : jFname.value,
+                        lname : jLname.value,
+                        email : jEmail.value,
+                        contact : Number(jContact.value),
+                        id : uuid()
+                    }
+
+                    students.push(obj); 
+
+                    templating(); // called templating so the page will now show the added object too
+
+                    localStorage.setItem("wstStudents", JSON.stringify(students)); // sending the updated array into local storage
+
+                    // console.log(localStudents);
+
+                    jStdForm.reset(); // it clears the values filled in the form fields after submission of the form
+
+                 }
+
+                
+                const updateObject = (uo) => {
+
+                    let gtEditId = localStorage.getItem("stEditId");
+                    // console.log(gtEditId);
+
+                    gtObject = students.find( stf => {
+                        if ( gtEditId === stf.id ) {
+                            return stf;
+                        }
+                    });   
+                    // console.log(gtObject.fname);
+
+                    gtObject.fname = jFname.value;
+                    gtObject.lname = jLname.value;
+                    gtObject.email = jEmail.value;
+                    gtObject.contact = jContact.value;
+
+                    // students.forEach( ste => {
+                    //     if ( ste.id === getUpdatedId ) {
+                    //         ste.fname = jFname.value,
+                    //         ste.lname = jLname.value,
+                    //         ste.email = jEmail.value,
+                    //         ste.contact = jContact.value
+                    //     }
+                    // } );
+
+                    templating();
+
+                    localStorage.setItem("wstStudents", JSON.stringify(students));
+
+                    jSubmit1.classList.remove("d-none");
+                    jUpdate1.classList.add("d-none");
+
+                    uo.reset();
+                } 
+
+                
+                jStdForm.addEventListener("submit", addNewObject);
+
+                jUpdate1.addEventListener("click", updateObject);
+               
+               
+            </script>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
